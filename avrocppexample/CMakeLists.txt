@@ -11,27 +11,17 @@ option(CPPKAFKA_DISABLE_TESTS ON)
 option(CPPKAFKA_DISABLE_EXAMPLES ON)
 
 # Specify the paths to the Avro include directory and library
-# set(AVRO_INCLUDE_DIR /include)
 set(AVRO_CPP_PATH "/usr/local/include/avro")
-# set(AVRO_LIBRARY_DIR "/usr/local/include/avro")
 set(INC_DIR
 	"${CMAKE_SOURCE_DIR}/include"
 	"${AVRO_CPP_PATH}"
 	)
-# set(AVRO_LIBRARIES avro)
-# add_subdirectory(deps/avro EXCLUDE_FROM_ALL)
+
 find_library(AVRO_CPP_LIBRARY avrocpp_s REQUIRED PATHS ${AVRO_CPP_PATH}/../lib)
 
 list(APPEND LIBS 
 	avrocpp_s
 	)
-
-# Include the Avro headers
-# include_directories(${AVRO_CPP_PATH})
-# include_directories(${CMAKE_SOURCE_DIR}/include)
-# include_directories(${CMAKE_SOURCE_DIR}/deps/avro)
-
-# Link the Avro library
 
 link_directories(${AVRO_LIBRARY_DIR})
 
@@ -44,7 +34,6 @@ set(SOURCE_DIR
     include/HKUtils.cpp
     # Add other .cpp files if necessary
 )
-
 
 # Add the executable
 add_executable(HkSerializerTest ${SOURCE_DIR})
