@@ -17,7 +17,7 @@ int main() {
     HKDeserializer dser = HKDeserializer(serializedQueue);
 
     HeaderHK genval = generator.get();
-    print_HK(genval);
+    // print_HK(genval);
     ser.encode(&genval);
     std::cout << "MAIN:Lenght of queue: " << serializedQueue.size() << std::endl;
 

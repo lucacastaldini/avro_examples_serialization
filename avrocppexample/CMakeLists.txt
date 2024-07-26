@@ -28,7 +28,8 @@ link_directories(${AVRO_LIBRARY_DIR})
 
 # Add the source files (include all relevant .cpp files here)
 set(SOURCE_DIR 
-    src/main.cpp
+    # src/main.cpp
+    src/ProdCons.cpp
     include/HKGenerator.cpp  # Add all relevant .cpp files
     include/HKAvroEntities.cpp
     include/HKUtils.cpp
