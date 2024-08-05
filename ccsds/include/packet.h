@@ -10,7 +10,7 @@
 
 #include <cstdint>
 #include <time.h>
-
+#include <array>
 
 #define TC_RX_OK 			0x00
 #define TC_RX_ERR_WRONGSTT 	0xFF
@@ -21,7 +21,7 @@
 
 
 // Define the HeaderHK struct
-class HeaderHK {
+class Header {
 public:
     // Header data
     union {
@@ -39,7 +39,7 @@ public:
         };
     };
 
-    void print(const HeaderHK& header) const;
+    static void print( Header& header);
 };
 
 // Define the Data_Hk struct
@@ -52,13 +52,13 @@ public:
         uint16_t _p16[6];  // 3 * 2 2-byte integers
         uint32_t _p32[3];  // 3 integers
         struct __attribute__((packed)) {
-            int wformcount;
-            int flags;
-            int crc;
+            uint32_t wformcount;
+            uint32_t flags;
+            uint32_t crc;
         };
     };
 
-    void print(const Data_Hk& data) const;
+    static void print( Data_Hk& data);
 };
 
 // Define the Data_Wf struct
@@ -71,13 +71,17 @@ public:
         uint16_t _p16[6];  // 3 * 2 2-byte integers
         uint32_t _p32[3];  // 3 integers
         struct __attribute__((packed)) {
-            int wformcount;
-            int flags;
-            int crc;
+            int32_t equalizationLevel;
+            int32_t decimation;
+            int32_t curOffset;
+            int32_t trigOff;
+            int32_t size;
+            std::array<int32_t,16384> data;
+            int32_t crc;
         };
     };
 
-    void print(const Data_Wf& data) const;
+    static void print( Data_Wf& data);
 };
 
 

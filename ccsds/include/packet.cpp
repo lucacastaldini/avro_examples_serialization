@@ -12,7 +12,7 @@
 #include <cassert>
 #include <iostream>
 
-void HeaderHK::print(const HeaderHK& header) const {
+void Header::print(Header& header) {
     std::cout << "HeaderHK:" << std::endl;
     std::cout << "  APID: " << header.apid << std::endl;
     std::cout << "  Counter: " << header.counter << std::endl;
@@ -23,9 +23,29 @@ void HeaderHK::print(const HeaderHK& header) const {
     std::cout << "  Config ID: " << header.configID << std::endl;
 }
 
-void Data_Hk::print(const Data_Hk& data) const {
+void Data_Hk::print(Data_Hk& data) {
     std::cout << "Data_Hk:" << std::endl;
     std::cout << "  Waveform Count: " << data.wformcount << std::endl;
     std::cout << "  Flags: 0x" << std::hex << data.flags << std::dec << std::endl;
+    std::cout << "  CRC: 0x" << std::hex << data.crc << std::dec << std::endl;
+}
+
+void Data_Wf::print(Data_Wf& data) {
+    std::cout << "Data_Wf:" << std::endl;
+    std::cout << "  Equalization Level: " << data.equalizationLevel << std::endl;
+    std::cout << "  Decimation: " << data.decimation << std::endl;
+    std::cout << "  Current Offset: " << data.curOffset << std::endl;
+    std::cout << "  Trigger Offset: " << data.trigOff << std::endl;
+    std::cout << "  Size: " << data.size << std::endl;
+    
+    std::cout << "  Data: [";
+    for (int i = 0; i < 10; ++i) {  // Print only the first 10 elements for brevity
+        std::cout << data.data[i];
+        if (i < 9) {
+            std::cout << ", ";
+        }
+    }
+    std::cout << ", ...]" << std::endl; // Indicating there are more elements not shown
+    
     std::cout << "  CRC: 0x" << std::hex << data.crc << std::dec << std::endl;
 }

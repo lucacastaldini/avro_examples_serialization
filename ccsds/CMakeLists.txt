@@ -12,9 +12,10 @@ set(INC_DIR
 
 # Add the source files (include all relevant .cpp files here)
 set(SOURCE_DIR 
-    main.cpp
+    HKtest.cpp
     include/packet.cpp  # Add all relevant .cpp files
     include/tchandler.cpp
+    include/generators.cpp
     # Add other .cpp files if necessary
 )
 

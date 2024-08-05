@@ -31,8 +31,8 @@ private:
 };
 
 // Function to generate a HeaderHK message
-HeaderHK generateMessage() {
-    HeaderHK message;
+Header generateMessage() {
+    Header message;
     message.set_apid(1);
     message.set_counter(123);
     message.set_type(456);
@@ -51,7 +51,7 @@ class MessageWriter {
 public:
     MessageWriter(ThreadSafeQueue<std::string>& queue) : queue_(queue) {}
 
-    void writeMessage(const HeaderHK& message) {
+    void writeMessage(const Header& message) {
         // Serialize the message to a string
         std::string serialized_message;
         if (!message.SerializeToString(&serialized_message)) {
@@ -72,7 +72,7 @@ class MessageReader {
 public:
     MessageReader(ThreadSafeQueue<std::string>& queue) : queue_(queue) {}
 
-    bool readMessage(HeaderHK& message) {
+    bool readMessage(Header& message) {
         std::string serialized_message;
         if (!queue_.pop(serialized_message)) {
             std::cerr << "Failed to pop message from queue." << std::endl;
@@ -99,11 +99,11 @@ int main() {
     MessageReader reader(sharedQueue);
 
     // Generate a message and write it to the queue
-    HeaderHK message = generateMessage();
+    Header message = generateMessage();
     writer.writeMessage(message);
 
     // Read the message from the queue
-    HeaderHK received_message;
+    Header received_message;
     if (reader.readMessage(received_message)) {
         std::cout << "Received HeaderHK message:" << std::endl;
         std::cout << "APID: " << received_message.apid() << std::endl;

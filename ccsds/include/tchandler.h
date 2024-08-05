@@ -13,9 +13,9 @@
 
 class TcHandler {
 public:
-    void bufferizeHk(uint8_t* buff, size_t buffSz, HeaderHK* header, Data_Hk* data);
-    void debufferizeHk(uint8_t* buff, size_t buffSz, HeaderHK* header, Data_Hk* data);
-    std::pair<HeaderHK, Data_Hk> generateHk();
+    void bufferizeHk(uint8_t* buff, size_t buffSz, Header* header, Data_Hk* data);
+    void debufferizeHk(uint8_t* buff, size_t buffSz, Header* header, Data_Hk* data);
+    
 
 private:
     void sendEnd();
