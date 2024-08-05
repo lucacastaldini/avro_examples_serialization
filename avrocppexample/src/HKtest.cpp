@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "HKSchema.hh"
-#include "HKAvroEntities.hh"
+#include "AvroEntities.hh"
 #include "HKGenerator.hh"
-#include "HKUtils.hh"
+#include "Utils.hh"
 
 using namespace HK;
 
@@ -13,11 +13,11 @@ int main() {
 
     HKGenerator generator = HKGenerator(1);
     
-    HKSerializer ser = HKSerializer(serializedQueue);
-    HKDeserializer dser = HKDeserializer(serializedQueue);
+    auto ser = AvroSerializer<HeaderHK>(serializedQueue);
+    auto dser = AvroDeserializer<HeaderHK>(serializedQueue);
 
     HeaderHK genval = generator.get();
-    print_HK(genval);
+    print_data(genval);
     ser.encode(&genval);
     std::cout << "MAIN:Lenght of queue: " << serializedQueue.size() << std::endl;
 
