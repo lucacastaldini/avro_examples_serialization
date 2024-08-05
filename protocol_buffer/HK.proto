@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+message TimeSpec {
+  int64 tv_sec = 1;
+  int64 tv_nsec = 2;
+}
+
+message HeaderHK {
+  int32 apid = 1;
+  int32 counter = 2;
+  int32 type = 3;
+  TimeSpec time = 4;
+  int32 abstime = 5;
+  int32 runID = 6;
+  int32 configID = 7;
+  int32 wformcount = 8;
+  int32 flags = 9;
+  int32 crc = 10;
+}
