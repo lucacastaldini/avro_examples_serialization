@@ -19,7 +19,7 @@
 #define TC_EX_ERR_RUPDFAIL 	0xFE
 #define TC_EX_ERR_INITFAIL  0xFD
 
-
+#define WF_SIZE 16384
 // Define the HeaderHK struct
 class Header {
 public:
@@ -67,9 +67,9 @@ public:
 
     // Header data
     union {
-        uint8_t _p8[12];   // 3 * 4 bytes for 3 integers
-        uint16_t _p16[6];  // 3 * 2 2-byte integers
-        uint32_t _p32[3];  // 3 integers
+        uint8_t _p8[(WF_SIZE+6)*4];  
+        uint16_t _p16[(WF_SIZE+6)*2];  
+        uint32_t _p32[WF_SIZE+6];  
         struct __attribute__((packed)) {
             int32_t equalizationLevel;
             int32_t decimation;

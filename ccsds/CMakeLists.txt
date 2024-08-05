@@ -10,17 +10,27 @@ set(INC_DIR
 	"${CMAKE_SOURCE_DIR}/include"
 	)
 
-# Add the source files (include all relevant .cpp files here)
-set(SOURCE_DIR 
-    HKtest.cpp
+
+set(COMMON_SOURCES 
     include/packet.cpp  # Add all relevant .cpp files
-    include/tchandler.cpp
     include/generators.cpp
     # Add other .cpp files if necessary
 )
+# Add the source files (include all relevant .cpp files here)
+set(HKTEST_SOURCES 
+    src/HKtest.cpp
+    ${COMMON_SOURCES}
+)
+# Add the source files for WFtest
+set(WFTEST_SOURCES 
+    src/WFtest.cpp
+    ${COMMON_SOURCES}
+)
 
 # Add the executable
-add_executable(CCSDSTest ${SOURCE_DIR})
+add_executable(HKtest ${HKTEST_SOURCES})
+add_executable(WFtest ${WFTEST_SOURCES})
 
-target_include_directories (CCSDSTest PUBLIC ${INC_DIR})
+target_include_directories (HKtest PUBLIC ${INC_DIR})
+target_include_directories (WFtest PUBLIC ${INC_DIR})
 # Link the Avro library to the executable

@@ -5,25 +5,25 @@
 int main() {
     TcHandler handler;
 
-    constexpr size_t buffSz = sizeof(Header) + sizeof(Data_Hk);
+    constexpr size_t buffSz = sizeof(Header) + sizeof(Data_Wf);
     uint8_t buffer[buffSz];  // Use stack allocation for buffer
 
     // Generate HeaderHK and Data_Hk
-    std::pair<Header, Data_Hk> hkPair = generateHk();
+    std::pair<Header, Data_Wf> wfPair = generateWf();
 
     // Bufferize the generated structures
-    handler.bufferizeHk(buffer, buffSz, &hkPair.first, &hkPair.second);
+    handler.bufferize(buffer, buffSz, &wfPair.first, &wfPair.second);
 
     // Variables to hold debufferized data
     Header debufferizedHeader;
-    Data_Hk debufferizedData;
+    Data_Wf debufferizedData;
 
     // Debufferize the content back into structures
-    handler.debufferizeHk(buffer, buffSz, &debufferizedHeader, &debufferizedData);
+    handler.debufferize(buffer, buffSz, &debufferizedHeader, &debufferizedData);
 
     // Verify the content of the debufferized data
     std::cout << "Debufferized Header APID: " << debufferizedHeader.apid << std::endl;
-    std::cout << "Debufferized Data Wformcount: " << debufferizedData.wformcount << std::endl;
+    std::cout << "Debufferized Data size: " << debufferizedData.size << std::endl;
 
     Header::print(debufferizedHeader);
 
