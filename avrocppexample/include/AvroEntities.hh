@@ -52,14 +52,14 @@ void AvroSerializer<T>::encode(const T* data) {
     avro::encode(*e, *data);
     std::shared_ptr<std::vector<uint8_t>> p = avro::snapshot(*out);
 
-    std::cout << "Vector values are: ";
-    for (auto byte : *p) {
-        std::cout << static_cast<int>(byte) << " ";
-    }
-    std::cout << std::endl;
+    // std::cout << "Vector values are: ";
+    // for (auto byte : *p) {
+    //     std::cout << static_cast<int>(byte) << " ";
+    // }
+    // std::cout << std::endl;
 
     serializedQueue.push(*p);
-    std::cout << "Length of queue: " << serializedQueue.size() << std::endl;
+    // std::cout << "Length of queue: " << serializedQueue.size() << std::endl;
 }
 
 // AvroDeserializer class definition
