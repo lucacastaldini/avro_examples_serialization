@@ -1,19 +1,18 @@
 cmake_minimum_required(VERSION 3.10)
-project(AvroSerialize CXX)
+project(AvroSerializer CXX)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC")
 
 # Specify the paths to the Avro include directory and library
 set(AVRO_CPP_PATH "/usr/local/include/avro")
+
 set(INC_DIR
-    "${CMAKE_SOURCE_DIR}/include"
-    "${AVRO_CPP_PATH}"
+    "include"  # Include directory within the small project
+    "${AVRO_CPP_PATH}"             # Avro include directory
 )
 
-find_library(AVRO_CPP_LIBRARY avrocpp_s REQUIRED PATHS ${AVRO_CPP_PATH}/../lib)
+find_library(AVRO_CPP_LIBRARY avrocpp_s REQUIRED PATHS ${AVRO_CPP_PATH}/../../lib)
 
 list(APPEND LIBS 
     avrocpp_s
@@ -21,12 +20,11 @@ list(APPEND LIBS
 
 link_directories(${AVRO_LIBRARY_DIR})
 
-# Add the common source files (include all relevant .cpp files here)
+# Add the common source files
 set(COMMON_SOURCES 
     include/HKGenerator.cpp
     include/WFGenerator.cpp
     include/Utils.cpp
-    # Add other .cpp files if necessary
 )
 
 # Add the source files for HKtest
@@ -41,12 +39,21 @@ set(WFTEST_SOURCES
     ${COMMON_SOURCES}
 )
 
-# Add the executable for HKtest
+# Create a static library for HKtest sources
+add_library(HKTestLib SHARED ${HKTEST_SOURCES})
+target_include_directories(HKTestLib PUBLIC ${INC_DIR})  # Ensure headers are included
+target_link_libraries(HKTestLib PUBLIC ${LIBS})
+
+# Create a static library for WFtest sources
+add_library(WFTestLib SHARED ${WFTEST_SOURCES})
+target_include_directories(WFTestLib PUBLIC ${INC_DIR})  # Ensure headers are included
+target_link_libraries(WFTestLib PUBLIC ${LIBS})
+
+# Optionally, you can still build the test executables using the libraries
 add_executable(HkSerializerTest ${HKTEST_SOURCES})
 target_include_directories(HkSerializerTest PUBLIC ${INC_DIR})
-target_link_libraries(HkSerializerTest LINK_PUBLIC ${LIBS})
+target_link_libraries(HkSerializerTest LINK_PUBLIC HKTestLib)
 
-# Add the executable for WFtest
 add_executable(WfSerializerTest ${WFTEST_SOURCES})
 target_include_directories(WfSerializerTest PUBLIC ${INC_DIR})
-target_link_libraries(WfSerializerTest LINK_PUBLIC ${LIBS})
+target_link_libraries(WfSerializerTest LINK_PUBLIC WFTestLib)
