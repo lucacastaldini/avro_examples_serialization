@@ -25,28 +25,47 @@ if(MSVC AND protobuf_MSVC_STATIC_RUNTIME)
 endif()
 
 
-# set(WF_PROTOS HK.proto)
-set(HK_PROTOS HK.proto)
+set(TS_PROTOS "${PROJECT_SOURCE_DIR}/TimeSpec.proto")
+set(WF_PROTOS "${PROJECT_SOURCE_DIR}/WF.proto")
+set(HK_PROTOS "${PROJECT_SOURCE_DIR}/HK.proto")
 
 #code generations
+
 if(protobuf_MODULE_COMPATIBLE) #Legacy Support
+    protobuf_generate_cpp(TS_PROTO_SRCS TS_PROTO_HDRS ${TS_PROTOS})
     protobuf_generate_cpp(WF_PROTO_SRCS WF_PROTO_HDRS ${WF_PROTOS})
     protobuf_generate_cpp(HK_PROTO_SRCS HK_PROTO_HDRS ${HK_PROTOS})
 endif()
 
-foreach(example readerwriter)
+set(INC_DIR 
+  "${PROJECT_SOURCE_DIR}/include"
+  "${PROJECT_SOURCE_DIR}/build"
+  )
 
-    set(${example}_SRCS ${example}.cpp)
+# Add the common source files
+set(COMMON_SOURCES 
+  "include/HKGenerator.cpp"
+  "include/WFGenerator.cpp"
+  "include/TimeSpecGen.cpp"
+  "include/Utils.cpp"
+)
+set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
+
+
+foreach(example "WF_main")
+
+    set(${example}_SRCS "${SRC_DIR}/${example}.cpp")
 
     list(APPEND ${example}_SRCS ${HK_PROTO_SRCS} ${WF_PROTO_HDRS} ${HK_PROTO_HDRS})
 
   #Executable setup
   set(executable_name ${example}_cpp)
-  add_executable(${executable_name} ${${example}_SRCS} ${WF_PROTOS} ${HK_PROTOS})
+  add_executable(${executable_name} ${${example}_SRCS} ${COMMON_SOURCES} ${TS_PROTOS} ${WF_PROTOS} ${HK_PROTOS})
   if(protobuf_MODULE_COMPATIBLE) #Legacy mode
-    target_include_directories(${executable_name} PUBLIC ${PROTOBUF_INCLUDE_DIRS})
+    target_include_directories(${executable_name} PUBLIC ${PROTOBUF_INCLUDE_DIRS} ${INC_DIR})
     target_link_libraries(${executable_name} ${PROTOBUF_LIBRARIES})
   else()
+    target_include_directories(${executable_name} PUBLIC ${INC_DIR})
     target_link_libraries(${executable_name} protobuf::libprotobuf)
     protobuf_generate(TARGET ${executable_name})
   endif()

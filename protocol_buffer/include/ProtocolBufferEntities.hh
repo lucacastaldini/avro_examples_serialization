@@ -1,3 +1,6 @@
+#ifndef PB_ENTITIES_HH
+#define PB_ENTITIES_HH
+
 #include <iostream>
 #include <queue>
 #include <mutex>
@@ -30,28 +33,12 @@ private:
     std::condition_variable cond_var_;
 };
 
-// Function to generate a HeaderHK message
-Header generateMessage() {
-    Header message;
-    message.set_apid(1);
-    message.set_counter(123);
-    message.set_type(456);
-    message.set_abstime(789);
-    message.set_runid(101112);
-    message.set_configid(131415);
-    message.set_wformcount(161718);
-    message.set_flags(192021);
-    message.set_crc(222324);
-
-    return message;
-}
-
 // Writer class
-class MessageWriter {
+template <class T> class MessageWriter {
 public:
     MessageWriter(ThreadSafeQueue<std::string>& queue) : queue_(queue) {}
 
-    void writeMessage(const Header& message) {
+    void writeMessage(const T& message) {
         // Serialize the message to a string
         std::string serialized_message;
         if (!message.SerializeToString(&serialized_message)) {
@@ -68,11 +55,11 @@ private:
 };
 
 // Reader class
-class MessageReader {
+template <class T> class MessageReader {
 public:
     MessageReader(ThreadSafeQueue<std::string>& queue) : queue_(queue) {}
 
-    bool readMessage(Header& message) {
+    bool readMessage(T& message) {
         std::string serialized_message;
         if (!queue_.pop(serialized_message)) {
             std::cerr << "Failed to pop message from queue." << std::endl;
@@ -92,26 +79,4 @@ private:
     ThreadSafeQueue<std::string>& queue_;
 };
 
-// Main function demonstrating usage
-int main() {
-    ThreadSafeQueue<std::string> sharedQueue;
-    MessageWriter writer(sharedQueue);
-    MessageReader reader(sharedQueue);
-
-    // Generate a message and write it to the queue
-    Header message = generateMessage();
-    writer.writeMessage(message);
-
-    // Read the message from the queue
-    Header received_message;
-    if (reader.readMessage(received_message)) {
-        std::cout << "Received HeaderHK message:" << std::endl;
-        std::cout << "APID: " << received_message.apid() << std::endl;
-        std::cout << "Counter: " << received_message.counter() << std::endl;
-        // Output other fields as needed
-    } else {
-        std::cerr << "Failed to read the message." << std::endl;
-    }
-
-    return 0;
-}
+#endif
