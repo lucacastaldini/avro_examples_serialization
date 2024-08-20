@@ -27,8 +27,6 @@ template <class T>
 class AvroSerializer {
 private:
     std::queue<std::vector<uint8_t>>& serializedQueue;
-    std::shared_ptr<avro::OutputStream> out;
-    avro::EncoderPtr e;
 
 public:
     // Constructor
@@ -41,15 +39,16 @@ public:
 // AvroSerializer class implementation
 template <class T>
 AvroSerializer<T>::AvroSerializer(std::queue<std::vector<uint8_t>>& q)
-    : serializedQueue(q), e(avro::binaryEncoder()) {
-    out = avro::memoryOutputStream();  // Initialize the OutputStream here
-    e->init(*out);
-}
+    : serializedQueue(q) {}
 
 template <class T>
 void AvroSerializer<T>::encode(const T* data) {
+    
+    std::shared_ptr<avro::OutputStream> out = avro::memoryOutputStream();
+    avro::EncoderPtr e = avro::binaryEncoder();
     e->init(*out);
     avro::encode(*e, *data);
+
     std::shared_ptr<std::vector<uint8_t>> p = avro::snapshot(*out);
 
     // std::cout << "Vector values are: ";
@@ -67,9 +66,7 @@ template <class T>
 class AvroDeserializer {
 private:
     std::queue<std::vector<uint8_t>>& serializedQueue;
-    std::unique_ptr<avro::InputStream> in;
-    avro::DecoderPtr d;
-    T c2;
+    T c;
     bool stop;
 
 public:
@@ -83,25 +80,26 @@ public:
 // AvroDeserializer class implementation
 template <class T>
 AvroDeserializer<T>::AvroDeserializer(std::queue<std::vector<uint8_t>>& q)
-    : serializedQueue(q), stop(false), d(avro::binaryDecoder()) {}
+    : serializedQueue(q) {}
 
 template <class T>
 T AvroDeserializer<T>::decode() {
     try {
-        std::cout << "Length of queue: " << serializedQueue.size() << std::endl;
+        // std::cout << "Length of queue: " << serializedQueue.size() << std::endl;
 
         if (!serializedQueue.empty()) {
             std::vector<uint8_t> dequeuedData = serializedQueue.front();
             serializedQueue.pop();
 
-            in = avro::memoryInputStream(dequeuedData.data(), dequeuedData.size());
+            std::unique_ptr<avro::InputStream> in = avro::memoryInputStream(dequeuedData.data(), dequeuedData.size());
+            avro::DecoderPtr d = avro::binaryDecoder();
             d->init(*in);
-            avro::decode(*d, c2);
+            avro::decode(*d, c);
 
             // Assuming print is a function to print T data
-            print_data(c2);  // Replace or adjust according to your needs
+            // print_data(c2);  // Replace or adjust according to your needs
 
-            return c2;
+            return c;
         } else {
             std::cout << "Length of queue: " << serializedQueue.size() << std::endl;
             throw std::runtime_error("No more data to deserialize");
