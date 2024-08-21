@@ -40,20 +40,15 @@ set(WFTEST_SOURCES
 )
 
 # Create a static library for HKtest sources
-add_library(HKTestLib SHARED ${HKTEST_SOURCES})
-target_include_directories(HKTestLib PUBLIC ${INC_DIR})  # Ensure headers are included
-target_link_libraries(HKTestLib PUBLIC ${LIBS})
-
-# Create a static library for WFtest sources
-add_library(WFTestLib SHARED ${WFTEST_SOURCES})
-target_include_directories(WFTestLib PUBLIC ${INC_DIR})  # Ensure headers are included
-target_link_libraries(WFTestLib PUBLIC ${LIBS})
+add_library(GSAvroSerialization SHARED ${COMMON_SOURCES})
+target_include_directories(GSAvroSerialization PUBLIC ${INC_DIR})  # Ensure headers are included
+target_link_libraries(GSAvroSerialization PUBLIC ${LIBS})
 
 # Optionally, you can still build the test executables using the libraries
 add_executable(HkSerializerTest ${HKTEST_SOURCES})
 target_include_directories(HkSerializerTest PUBLIC ${INC_DIR})
-target_link_libraries(HkSerializerTest LINK_PUBLIC HKTestLib)
+target_link_libraries(HkSerializerTest LINK_PUBLIC GSAvroSerialization)
 
 add_executable(WfSerializerTest ${WFTEST_SOURCES})
 target_include_directories(WfSerializerTest PUBLIC ${INC_DIR})
-target_link_libraries(WfSerializerTest LINK_PUBLIC WFTestLib)
+target_link_libraries(WfSerializerTest LINK_PUBLIC GSAvroSerialization)
