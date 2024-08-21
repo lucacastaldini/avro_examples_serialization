@@ -27,6 +27,10 @@ public:
         return true;
     }
 
+    size_t size(){
+        return queue_.size();
+    }
+
 private:
     std::queue<T> queue_;
     std::mutex mutex_;

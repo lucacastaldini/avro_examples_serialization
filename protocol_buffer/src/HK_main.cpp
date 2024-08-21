@@ -17,22 +17,20 @@
 
 int main() {
     ThreadSafeQueue<std::string> sharedQueue;
-    MessageWriter<HeaderandWaveform> writer(sharedQueue);
-    MessageReader<HeaderandWaveform> reader(sharedQueue);
+    MessageWriter<HeaderHK> writer(sharedQueue);
+    MessageReader<HeaderHK> reader(sharedQueue);
 
 
-    auto message_gen =  WFGenerator(1);
+    auto message_gen =  HKGenerator(1);
     // auto message_gen2 =  HKGenerator(1);
     
     // Generate a message and write it to the queue
-    HeaderandWaveform message = message_gen.get();
-    // HeaderHK message2 = message_gen2.get();
-    // print_WF(message);
-    // print_HK(message2);
+    HeaderHK message = message_gen.get();
+
     writer.writeMessage(message);
 
     // // Read the message from the queue
-    HeaderandWaveform received_message;
+    HeaderHK received_message;
     if (reader.readMessage(received_message)) {
         std::cout << "Received HeaderHK message:" << std::endl;
         std::cout << "APID: " << received_message.apid() << std::endl;
@@ -41,6 +39,6 @@ int main() {
     } else {
         std::cerr << "Failed to read the message." << std::endl;
     }
-    print_WF(received_message);
+    print_HK(received_message);
     return 0;
 }

@@ -1,8 +1,12 @@
 # Minimum CMake required
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.10)
 
 # Project
-project(protobuf-rp)
+project(gs_protobuf_serialization CXX)
+
+# Ensure that we are using static libraries, including Protocol Buffers
+set(protobuf_BUILD_SHARED_LIBS OFF)  # Disable shared libraries for protobuf
+set(BUILD_SHARED_LIBS OFF)  # Globally disable shared libraries
 
 # Find required protobuf package
 find_package(protobuf CONFIG REQUIRED)
@@ -24,18 +28,11 @@ if(MSVC AND protobuf_MSVC_STATIC_RUNTIME)
   endforeach()
 endif()
 
-
 set(TS_PROTOS "${PROJECT_SOURCE_DIR}/TimeSpec.proto")
 set(WF_PROTOS "${PROJECT_SOURCE_DIR}/WF.proto")
 set(HK_PROTOS "${PROJECT_SOURCE_DIR}/HK.proto")
 
 #code generations
-
-if(protobuf_MODULE_COMPATIBLE) #Legacy Support
-    protobuf_generate_cpp(TS_PROTO_SRCS TS_PROTO_HDRS ${TS_PROTOS})
-    protobuf_generate_cpp(WF_PROTO_SRCS WF_PROTO_HDRS ${WF_PROTOS})
-    protobuf_generate_cpp(HK_PROTO_SRCS HK_PROTO_HDRS ${HK_PROTOS})
-endif()
 
 set(INC_DIR 
   "${PROJECT_SOURCE_DIR}/include"
@@ -49,25 +46,24 @@ set(COMMON_SOURCES
   "include/TimeSpecGen.cpp"
   "include/Utils.cpp"
 )
+
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
 
+# Create a static library for GSProtoclBufferSerialization sources
+add_library(GSProtoclBufferSerialization STATIC ${COMMON_SOURCES} ${TS_PROTOS} ${WF_PROTOS} ${HK_PROTOS})
+target_include_directories(GSProtoclBufferSerialization PUBLIC ${INC_DIR})  # Ensure headers are included
+target_link_libraries(GSProtoclBufferSerialization PUBLIC protobuf::libprotobuf)
+protobuf_generate(TARGET GSProtoclBufferSerialization)
 
-foreach(example "WF_main")
+foreach(project "WF_main" "HK_main")
 
-    set(${example}_SRCS "${SRC_DIR}/${example}.cpp")
-
-    list(APPEND ${example}_SRCS ${HK_PROTO_SRCS} ${WF_PROTO_HDRS} ${HK_PROTO_HDRS})
+  set(${project}_SRCS ${SRC_DIR}/${project}.cpp)
 
   #Executable setup
-  set(executable_name ${example}_cpp)
-  add_executable(${executable_name} ${${example}_SRCS} ${COMMON_SOURCES} ${TS_PROTOS} ${WF_PROTOS} ${HK_PROTOS})
-  if(protobuf_MODULE_COMPATIBLE) #Legacy mode
-    target_include_directories(${executable_name} PUBLIC ${PROTOBUF_INCLUDE_DIRS} ${INC_DIR})
-    target_link_libraries(${executable_name} ${PROTOBUF_LIBRARIES})
-  else()
-    target_include_directories(${executable_name} PUBLIC ${INC_DIR})
-    target_link_libraries(${executable_name} protobuf::libprotobuf)
-    protobuf_generate(TARGET ${executable_name})
-  endif()
+  set(executable_name ${project}_cpp)
+  add_executable(${executable_name} ${${project}_SRCS})
+  target_include_directories(${executable_name} PUBLIC ${INC_DIR})
+  target_link_libraries(${executable_name} GSProtoclBufferSerialization)
+    
 
 endforeach()
