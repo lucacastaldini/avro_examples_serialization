@@ -20,6 +20,7 @@ HeaderandWaveform WFGenerator::get() {
 
 // Private method to generate data
 void WFGenerator::generate_data() {
+    c1.clear_data();
     auto now = std::chrono::system_clock::now();
     std::time_t epoch_time = std::chrono::system_clock::to_time_t(now);   
     // Create an instance of TimeSpec

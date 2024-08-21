@@ -44,14 +44,17 @@ public:
 
     void writeMessage(const T& message) {
         // Serialize the message to a string
-        std::string serialized_message;
+        std::string serialized_message ;
         if (!message.SerializeToString(&serialized_message)) {
             std::cerr << "Failed to serialize the message." << std::endl;
             return;
         }
+        // std::cout << "Serialized size:" << serialized_message.size() << std::endl;
 
         // Push the serialized message into the shared queue
         queue_.push(serialized_message);
+
+        serialized_message.clear();
     }
 
 private:
