@@ -12,7 +12,7 @@
 #include <cassert>
 #include <iostream>
 
-void Header::print(Header& header) {
+void Header::print(const Header& header) {
     std::cout << "HeaderHK:" << std::endl;
     std::cout << "  APID: " << header.apid << std::endl;
     std::cout << "  Counter: " << header.counter << std::endl;
@@ -23,14 +23,14 @@ void Header::print(Header& header) {
     std::cout << "  Config ID: " << header.configID << std::endl;
 }
 
-void Data_Hk::print(Data_Hk& data) {
+void Data_Hk::print(const Data_Hk& data) {
     std::cout << "Data_Hk:" << std::endl;
     std::cout << "  Waveform Count: " << data.wformcount << std::endl;
     std::cout << "  Flags: 0x" << std::hex << data.flags << std::dec << std::endl;
     std::cout << "  CRC: 0x" << std::hex << data.crc << std::dec << std::endl;
 }
 
-void Data_Wf::print(Data_Wf& data) {
+void Data_Wf::print(const Data_Wf& data) {
     std::cout << "Data_Wf:" << std::endl;
     std::cout << "  Equalization Level: " << data.equalizationLevel << std::endl;
     std::cout << "  Decimation: " << data.decimation << std::endl;
@@ -48,4 +48,14 @@ void Data_Wf::print(Data_Wf& data) {
     std::cout << ", ...]" << std::endl; // Indicating there are more elements not shown
     
     std::cout << "  CRC: 0x" << std::hex << data.crc << std::dec << std::endl;
+}
+
+void HeaderHK::print(const HeaderHK& p) {
+    Header::print(p.h);
+    Data_Hk::print(p.d);
+}
+
+void HeaderWF::print(const HeaderWF& p) {
+    Header::print(p.h);
+    Data_Wf::print(p.d);
 }

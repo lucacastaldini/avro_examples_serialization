@@ -1,31 +1,30 @@
 #include "tchandler.h"
+#include <queue>
 #include "generators.hh"
 #include <iostream>
 
 int main() {
-    TcHandler handler;
 
-    constexpr size_t buffSz = sizeof(Header) + sizeof(Data_Wf);
-    uint8_t buffer[buffSz];  // Use stack allocation for buffer
+    std::queue<std::vector<uint8_t>> serializedQueue;
 
-    // Generate HeaderHK and Data_Hk
-    std::pair<Header, Data_Wf> wfPair = generateWf();
+    TcHandler<HeaderWF> handler(serializedQueue);
+
+    WFGenerator generator(1);
 
     // Bufferize the generated structures
-    handler.bufferize(buffer, buffSz, &wfPair.first, &wfPair.second);
+    handler.bufferize(generator.get());
 
     // Variables to hold debufferized data
-    Header debufferizedHeader;
-    Data_Wf debufferizedData;
+    HeaderWF receivedPacket;
 
     // Debufferize the content back into structures
-    handler.debufferize(buffer, buffSz, &debufferizedHeader, &debufferizedData);
+    handler.debufferize(receivedPacket);
 
     // Verify the content of the debufferized data
-    std::cout << "Debufferized Header APID: " << debufferizedHeader.apid << std::endl;
-    std::cout << "Debufferized Data size: " << debufferizedData.size << std::endl;
+    std::cout << "Debufferized Header APID: " << receivedPacket.h.apid << std::endl;
+    std::cout << "Debufferized Data size: " << receivedPacket.d.size << std::endl;
 
-    Header::print(debufferizedHeader);
+    HeaderWF::print(receivedPacket);
 
     return 0;
 }

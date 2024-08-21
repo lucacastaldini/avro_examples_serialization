@@ -1,31 +1,34 @@
 #include "tchandler.h"
 #include "generators.hh"
 #include <iostream>
+#include <queue>
+
+constexpr size_t buffSz = sizeof(HeaderHK);
 
 int main() {
-    TcHandler handler;
 
-    constexpr size_t buffSz = sizeof(Header) + sizeof(Data_Hk);
+    std::queue<std::vector<uint8_t>> serializedQueue;
+
+    TcHandler<HeaderHK> handler(serializedQueue);
+
+    HKGenerator generator(1);
+
     uint8_t buffer[buffSz];  // Use stack allocation for buffer
 
-    // Generate HeaderHK and Data_Hk
-    std::pair<Header, Data_Hk> hkPair = generateHk();
-
     // Bufferize the generated structures
-    handler.bufferize(buffer, buffSz, &hkPair.first, &hkPair.second);
+    handler.bufferize(generator.get());
 
     // Variables to hold debufferized data
-    Header debufferizedHeader;
-    Data_Hk debufferizedData;
+    HeaderHK debufferizedPack;
 
     // Debufferize the content back into structures
-    handler.debufferize(buffer, buffSz, &debufferizedHeader, &debufferizedData);
+    handler.debufferize(debufferizedPack);
 
     // Verify the content of the debufferized data
-    std::cout << "Debufferized Header APID: " << debufferizedHeader.apid << std::endl;
-    std::cout << "Debufferized Data Wformcount: " << debufferizedData.wformcount << std::endl;
+    std::cout << "Debufferized Header APID: " << debufferizedPack.h.apid << std::endl;
+    std::cout << "Debufferized Data Wformcount: " << debufferizedPack.d.wformcount << std::endl;
 
-    Header::print(debufferizedHeader);
+    HeaderHK::print(debufferizedPack);
 
     return 0;
 }

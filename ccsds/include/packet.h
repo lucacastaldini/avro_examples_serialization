@@ -39,7 +39,7 @@ public:
         };
     };
 
-    static void print( Header& header);
+    static void print(const Header& header);
 };
 
 // Define the Data_Hk struct
@@ -58,7 +58,7 @@ public:
         };
     };
 
-    static void print( Data_Hk& data);
+    static void print(const Data_Hk& data);
 };
 
 // Define the Data_Wf struct
@@ -81,7 +81,28 @@ public:
         };
     };
 
-    static void print( Data_Wf& data);
+    static void print(const Data_Wf& data);
+};
+
+class HeaderHK {
+public:
+    struct __attribute__((packed)) {
+        Header h;
+        Data_Hk d;
+    };
+
+    static void print(const HeaderHK& packet);
+};
+
+class HeaderWF {
+public:
+    struct __attribute__((packed)) {
+        Header h;
+        Data_Wf d;
+    };
+
+
+    static void print(const HeaderWF& packet);
 };
 
 
