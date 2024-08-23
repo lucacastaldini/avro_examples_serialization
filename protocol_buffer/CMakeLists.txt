@@ -28,9 +28,10 @@ if(MSVC AND protobuf_MSVC_STATIC_RUNTIME)
   endforeach()
 endif()
 
-set(TS_PROTOS "${PROJECT_SOURCE_DIR}/TimeSpec.proto")
-set(WF_PROTOS "${PROJECT_SOURCE_DIR}/WF.proto")
-set(HK_PROTOS "${PROJECT_SOURCE_DIR}/HK.proto")
+set(Proto_Messages_SRC_DIR ${PROJECT_SOURCE_DIR}/messages_def)
+set(TS_PROTOS "${Proto_Messages_SRC_DIR}/TimeSpec.proto")
+set(WF_PROTOS "${Proto_Messages_SRC_DIR}/WF.proto")
+set(HK_PROTOS "${Proto_Messages_SRC_DIR}/HK.proto")
 
 #code generations
 
@@ -55,7 +56,7 @@ set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
 add_library(GSProtoclBufferSerialization STATIC ${COMMON_SOURCES} ${TS_PROTOS} ${WF_PROTOS} ${HK_PROTOS})
 target_include_directories(GSProtoclBufferSerialization PUBLIC ${INC_DIR} ${PROTO_BINARY_DIR})  # Ensure headers are included
 target_link_libraries(GSProtoclBufferSerialization PUBLIC protobuf::libprotobuf)
-protobuf_generate(TARGET GSProtoclBufferSerialization PROTOC_OUT_DIR ${PROTO_BINARY_DIR})
+protobuf_generate(TARGET GSProtoclBufferSerialization IMPORT_DIRS ${Proto_Messages_SRC_DIR} PROTOC_OUT_DIR ${PROTO_BINARY_DIR})
 
 foreach(project "WF_main" "HK_main")
 
