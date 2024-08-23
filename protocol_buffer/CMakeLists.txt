@@ -47,13 +47,15 @@ set(COMMON_SOURCES
   "include/Utils.cpp"
 )
 
+set(PROTO_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+
 set(SRC_DIR "${PROJECT_SOURCE_DIR}/src")
 
 # Create a static library for GSProtoclBufferSerialization sources
 add_library(GSProtoclBufferSerialization STATIC ${COMMON_SOURCES} ${TS_PROTOS} ${WF_PROTOS} ${HK_PROTOS})
-target_include_directories(GSProtoclBufferSerialization PUBLIC ${INC_DIR})  # Ensure headers are included
+target_include_directories(GSProtoclBufferSerialization PUBLIC ${INC_DIR} ${PROTO_BINARY_DIR})  # Ensure headers are included
 target_link_libraries(GSProtoclBufferSerialization PUBLIC protobuf::libprotobuf)
-protobuf_generate(TARGET GSProtoclBufferSerialization)
+protobuf_generate(TARGET GSProtoclBufferSerialization PROTOC_OUT_DIR ${PROTO_BINARY_DIR})
 
 foreach(project "WF_main" "HK_main")
 
