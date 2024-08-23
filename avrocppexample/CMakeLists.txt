@@ -1,54 +1,54 @@
 cmake_minimum_required(VERSION 3.10)
-project(AvroSerialize CXX)
+project(AvroSerializer CXX)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_SKIP_INSTALL_ALL_DEPENDENCY true)
-
-option(CPPKAFKA_BUILD_SHARED OFF)
-option(CPPKAFKA_DISABLE_TESTS ON)
-option(CPPKAFKA_DISABLE_EXAMPLES ON)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC")
 
 # Specify the paths to the Avro include directory and library
-# set(AVRO_INCLUDE_DIR /include)
 set(AVRO_CPP_PATH "/usr/local/include/avro")
-# set(AVRO_LIBRARY_DIR "/usr/local/include/avro")
+
 set(INC_DIR
-	"${CMAKE_SOURCE_DIR}/include"
-	"${AVRO_CPP_PATH}"
-	)
-# set(AVRO_LIBRARIES avro)
-# add_subdirectory(deps/avro EXCLUDE_FROM_ALL)
-find_library(AVRO_CPP_LIBRARY avrocpp_s REQUIRED PATHS ${AVRO_CPP_PATH}/../lib)
+    "include"  # Include directory within the small project
+    "${AVRO_CPP_PATH}"             # Avro include directory
+)
+
+find_library(AVRO_CPP_LIBRARY avrocpp_s REQUIRED PATHS ${AVRO_CPP_PATH}/../../lib)
 
 list(APPEND LIBS 
-	avrocpp_s
-	)
-
-# Include the Avro headers
-# include_directories(${AVRO_CPP_PATH})
-# include_directories(${CMAKE_SOURCE_DIR}/include)
-# include_directories(${CMAKE_SOURCE_DIR}/deps/avro)
-
-# Link the Avro library
+    avrocpp_s
+)
 
 link_directories(${AVRO_LIBRARY_DIR})
 
-
-# Add the source files (include all relevant .cpp files here)
-set(SOURCE_DIR 
-    src/main.cpp
-    include/HKGenerator.cpp  # Add all relevant .cpp files
-    include/HKAvroEntities.cpp
-    include/HKUtils.cpp
-    # Add other .cpp files if necessary
+# Add the common source files
+set(COMMON_SOURCES 
+    include/HKGenerator.cpp
+    include/WFGenerator.cpp
+    include/Utils.cpp
 )
 
+# Add the source files for HKtest
+set(HKTEST_SOURCES 
+    src/HKtest.cpp
+    ${COMMON_SOURCES}
+)
 
-# Add the executable
-add_executable(HkSerializerTest ${SOURCE_DIR})
+# Add the source files for WFtest
+set(WFTEST_SOURCES 
+    src/WFtest.cpp
+    ${COMMON_SOURCES}
+)
 
-target_include_directories (HkSerializerTest PUBLIC ${INC_DIR})
-target_link_libraries( HkSerializerTest LINK_PUBLIC ${LIBS})
-# Link the Avro library to the executable
+# Create a static library for HKtest sources
+add_library(GSAvroSerialization SHARED ${COMMON_SOURCES})
+target_include_directories(GSAvroSerialization PUBLIC ${INC_DIR})  # Ensure headers are included
+target_link_libraries(GSAvroSerialization PUBLIC ${LIBS})
+
+# Optionally, you can still build the test executables using the libraries
+add_executable(HkSerializerTest ${HKTEST_SOURCES})
+target_include_directories(HkSerializerTest PUBLIC ${INC_DIR})
+target_link_libraries(HkSerializerTest LINK_PUBLIC GSAvroSerialization)
+
+add_executable(WfSerializerTest ${WFTEST_SOURCES})
+target_include_directories(WfSerializerTest PUBLIC ${INC_DIR})
+target_link_libraries(WfSerializerTest LINK_PUBLIC GSAvroSerialization)
