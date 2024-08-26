@@ -82,3 +82,18 @@ void HeaderWF::print(const HeaderWF& p, const int limit_print) {
     Data_Wf::print(p.d, limit_print);
 }
 
+//helpers
+SerializedTimespec serializeTimespec(const struct timespec& ts) {
+    SerializedTimespec sts;
+    sts.tv_sec = static_cast<int32_t>(ts.tv_sec);   // Cast to 32-bit
+    sts.tv_nsec = static_cast<int32_t>(ts.tv_nsec); // Cast to 32-bit
+    return sts;
+}
+
+struct timespec deserializeTimespec(const SerializedTimespec& sts) {
+    struct timespec ts;
+    ts.tv_sec = static_cast<time_t>(sts.tv_sec);   // Cast back to `time_t`
+    ts.tv_nsec = static_cast<long>(sts.tv_nsec);   // Cast back to `long`
+    return ts;
+}
+

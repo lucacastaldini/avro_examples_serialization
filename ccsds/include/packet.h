@@ -21,21 +21,27 @@
 
 #define WF_SIZE 16384
 // Define the HeaderHK struct
+
+struct SerializedTimespec {
+    int32_t tv_sec;   // Fixed-size 64-bit for seconds
+    int32_t tv_nsec;  // Fixed-size 64-bit for nanoseconds
+};
+
 class Header {
 public:
     // Header data
     union {
-        uint8_t _p8[28];   // 7 * 4 bytes for 7 integers
-        uint16_t _p16[14]; // 7 * 2 2-byte integers
-        uint32_t _p32[7];  // 7 integers
+        uint8_t _p8[32];   // 7 * 4 bytes for 7 integers
+        uint16_t _p16[16]; // 7 * 2 2-byte integers
+        uint32_t _p32[8];  // 7 integers
         struct __attribute__((packed)) {
-            int apid;
-            int counter;
-            int type;
-            struct timespec ts;
-            int abstime;
-            int runID;
-            int configID;
+            uint32_t apid;
+            uint32_t counter;
+            uint32_t type;
+            SerializedTimespec ts;
+            uint32_t abstime;
+            uint32_t runID;
+            uint32_t configID;
         };
     };
 
@@ -106,6 +112,9 @@ public:
     static void print(const HeaderWF& packet);
     static void print(const HeaderWF& packet, const int limit_print);
 };
+
+SerializedTimespec serializeTimespec(const struct timespec& ts);
+struct timespec deserializeTimespec(const SerializedTimespec& sts);
 
 
 #endif // __PACKET_H__

@@ -20,7 +20,7 @@ public:
 
 private:
     // Private member variables
-    timespec t1;           // For storing time
+    SerializedTimespec t1;           // For storing time
     HeaderHK c1;        // The HeaderHK object
     int runID;             // Identifier for the run
     int pc;                // Counter for the HeaderHK object
@@ -40,7 +40,7 @@ public:
 
 private:
     // Private member variables
-    timespec t1;           // For storing time
+    SerializedTimespec t1;           // For storing time
     HeaderWF c1;        // The HeaderHK object
     int runID;             // Identifier for the run
     int pc;                // Counter for the HeaderHK object
