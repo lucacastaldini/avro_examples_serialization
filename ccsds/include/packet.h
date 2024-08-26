@@ -38,7 +38,7 @@ public:
             uint32_t apid;
             uint32_t counter;
             uint32_t type;
-            SerializedTimespec ts;
+            alignas(4) SerializedTimespec ts;
             uint32_t abstime;
             uint32_t runID;
             uint32_t configID;
