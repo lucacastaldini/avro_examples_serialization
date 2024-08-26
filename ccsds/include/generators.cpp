@@ -25,7 +25,9 @@ void HKGenerator::generate_data() {
     c1.h.apid     = 3000;
     c1.h.counter  = pc++;
     c1.h.type     = 20;
-    clock_gettime(CLOCK_REALTIME, &c1.h.ts);
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    c1.h.ts = serializeTimespec(ts);
     c1.h.abstime  = epoch_time_32;
     c1.h.runID    = 1;
     c1.h.configID = 130;
@@ -55,7 +57,9 @@ void WFGenerator::generate_data() {
     c1.h.apid = 30303;
     c1.h.counter = pc++;
     c1.h.type = 1;
-    clock_gettime(CLOCK_REALTIME, &c1.h.ts);
+    timespec ts;
+    clock_gettime(CLOCK_REALTIME, &ts);
+    c1.h.ts = serializeTimespec(ts);
     c1.h.abstime = epoch_time_32;
     c1.h.runID = 209;
     c1.h.configID = 123;

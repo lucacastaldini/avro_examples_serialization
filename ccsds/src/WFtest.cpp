@@ -14,9 +14,9 @@ int main() {
     TcHandler<HeaderWF> handler(serializedQueue);
 
     WFGenerator generator(1);
-
+    auto packet = generator.get();
     // Bufferize the generated structures
-    handler.bufferize(generator.get());
+    handler.bufferize(packet);
 
     // Variables to hold debufferized data
     HeaderWF receivedPacket;
@@ -28,6 +28,9 @@ int main() {
     std::cout << "Debufferized Header APID: " << receivedPacket.h.apid << std::endl;
     std::cout << "Debufferized Data size: " << receivedPacket.d.size << std::endl;
 
+    
+    std::cout << "size of timespec: " << sizeof(packet.h.ts) << ". alignment:" << alignof(packet.h.ts) << std::endl;
+    
     HeaderWF::print(receivedPacket, 10);
 
     return 0;
